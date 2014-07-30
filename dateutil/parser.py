@@ -299,14 +299,17 @@ class parser(object):
             default = datetime.datetime.now().replace(hour=0, minute=0,
                                                       second=0, microsecond=0)
         res = self._parse(timestr, **kwargs)
-        if res is None:
-            raise ValueError, "unknown string format"
+
         repl = {}
         for attr in ["year", "month", "day", "hour",
                      "minute", "second", "microsecond"]:
             value = getattr(res, attr)
             if value is not None:
                 repl[attr] = value
+
+        if len(repl) == 0:
+            raise ValueError, "unknown string format"
+
         ret = default.replace(**repl)
         if res.weekday is not None and not res.day:
             ret = ret+relativedelta.relativedelta(weekday=res.weekday)
